@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 public class ChallengeApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChallengeApplication.class);
+    public static final String HASH = "9e8fd1f07363c6bd00a4d9a9b45904e111aafa2eb3de8bcdccabf431eb2bdec1";
+    public static final String POST_ERP_ORDER_URL = "http://erp.hackathon.seidor.digital/orders/2/";
+    public static final String GET_URL_ORDERS = "http://ecommerce.hackathon.seidor.digital/orders/?page=";
     private final ErpOrderBuilder erpOrderBuilder = new ErpOrderBuilder();
 
 
@@ -32,12 +35,12 @@ public class ChallengeApplication {
     }
 
     @Bean
-    public CommandLineRunner demo() {
+    public CommandLineRunner run() {
         return args -> {
             List<ErpOrder> erpOrderList = new ArrayList<>();
             for (int i = 1; i <= 10; i++) {
                 final RestTemplate restTemplate = new RestTemplate();
-                final ResponseEntity<Order[]> responseEntityOrder = restTemplate.getForEntity("http://ecommerce.hackathon.seidor.digital/orders/?page=" + i + "&per_page=10", Order[].class);
+                final ResponseEntity<Order[]> responseEntityOrder = restTemplate.getForEntity(GET_URL_ORDERS + i + "&per_page=10", Order[].class);
                 final Order[] orders = responseEntityOrder.getBody();
                 if (orders != null) {
                     erpOrderList.addAll(Arrays.stream(orders).map(erpOrderBuilder::buildErpOrderItem).collect(Collectors.toList()));
@@ -45,11 +48,11 @@ public class ChallengeApplication {
             }
 
             final HttpHeaders headers = new HttpHeaders();
-            headers.set("x-team-hash", "9e8fd1f07363c6bd00a4d9a9b45904e111aafa2eb3de8bcdccabf431eb2bdec1");
+            headers.set("x-team-hash", HASH);
             erpOrderList.forEach(erpOrder -> {
                 final RestTemplate restTemplate = new RestTemplate();
                 final HttpEntity<ErpOrder> request = new HttpEntity<>(erpOrder, headers);
-                final String URL = "http://erp.hackathon.seidor.digital/orders/2/" + erpOrder.getOrderId();
+                final String URL = POST_ERP_ORDER_URL + erpOrder.getOrderId();
                 ResponseEntity<String> response = restTemplate.postForEntity(URL, request, String.class);
                 LOG.info("ERP order:" + erpOrder);
                 LOG.info("Response message: " + response.getBody());

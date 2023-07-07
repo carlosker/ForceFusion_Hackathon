@@ -15,6 +15,15 @@ public class ShippingDateCalculator {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(orderDate, formatter);
 
+        // Verificar si la fecha calculada cae en un fin de semana (sábado o domingo)
+        if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.FRIDAY) {
+            // Si es sábado, agregar 2 días para ajustarlo al próximo día hábil (lunes)
+            date = date.plusDays(2);
+        } else if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            // Si es domingo, agregar 1 día para ajustarlo al próximo día hábil (lunes)
+            date = date.plusDays(1);
+        }
+
         // Agregar 3 días a la fecha del pedido
         LocalDate shippingDate = date.plusDays(2);
 
@@ -28,7 +37,8 @@ public class ShippingDateCalculator {
         }
 
         String monthValue = getMonthValue(shippingDate);
-        return shippingDate.getYear() + "-" + monthValue + "-" + shippingDate.getDayOfMonth();
+        String dayValue = getDayValue(shippingDate);
+        return shippingDate.getYear() + "-" + monthValue + "-" + dayValue;
     }
 
     private static String getMonthValue(final LocalDate shippingDate) {
@@ -37,6 +47,16 @@ public class ShippingDateCalculator {
             monthValue = "0" + shippingDate.getMonthValue();
         } else {
             monthValue = String.valueOf(shippingDate.getMonthValue());
+        }
+        return monthValue;
+    }
+
+    private static String getDayValue(final LocalDate shippingDate) {
+        String monthValue;
+        if (shippingDate.getDayOfMonth() < 10) {
+            monthValue = "0" + shippingDate.getDayOfMonth();
+        } else {
+            monthValue = String.valueOf(shippingDate.getDayOfMonth());
         }
         return monthValue;
     }

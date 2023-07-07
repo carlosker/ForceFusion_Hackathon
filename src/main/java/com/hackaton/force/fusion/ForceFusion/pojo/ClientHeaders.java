@@ -12,46 +12,39 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * @author <a href="juancarlos.gonzalez@seidor.com">Juan Carlos González</a> on 7/7/23
  **/
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "user_agent",
-        "x_planet"
-})
+
 public class ClientHeaders {
 
-    @JsonProperty("user_agent")
     private String userAgent;
-    @JsonProperty("x_planet")
     private String xPlanet;
-    @JsonIgnore
+
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
-    @JsonProperty("user_agent")
     public String getUserAgent() {
         return userAgent;
     }
 
-    @JsonProperty("user_agent")
+
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
 
-    @JsonProperty("x_planet")
+
     public String getxPlanet() {
         return xPlanet;
     }
 
-    @JsonProperty("x_planet")
+
     public void setxPlanet(String xPlanet) {
         this.xPlanet = xPlanet;
     }
 
-    @JsonAnyGetter
+
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
-    @JsonAnySetter
+
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
